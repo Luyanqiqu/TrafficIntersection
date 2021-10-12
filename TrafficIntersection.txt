@@ -1,0 +1,417 @@
+﻿/*Dec 17, 2019
+ NancyZ, NancyL
+ four-way stop traffic intersection with traffic lights. 
+ The intersection will be controlled with typical red, yellow, 
+ and green lights, and will include signals for advanced green 
+ as well as a pedestrian crosswalk. 
+ */
+PImage img1, img2, img3, img3a, img4, img5, img6, img7, img8, img9;
+PImage  img10, img11, img12, img13, img14, img15, img16, img17, img18, img19, img20;
+float xPos1=830, xPos2=160, xPos3=150, xPos6=830, xPos7=170;
+float yPos3=200, yPos4=40, yPos5=785;
+float yP1=100, yP2=150, yP3=180, yP13=730, xP4=180, xP5=90;
+float time1, time2, time3, time4;
+int walk=0;
+boolean car3;
+boolean check;
+int counter=0, lightorder=2, counter2=0, counter3=0, lightorder1=0;
+//counter is for light 2 and 3
+//counter3 is for light 1 and 4
+void setup() {
+  size(1100, 900); 
+  img1= loadImage("car1.png");
+  img2= loadImage("car2.png");
+  img3= loadImage("car3.png");
+  img3a= loadImage("car3a.png");
+  img4= loadImage("car4.png");
+  img5= loadImage("car5.png");
+  img6= loadImage("car6.png");
+  img7= loadImage("car7.png");
+  img8=loadImage("people1.png");
+  img9=loadImage("people2.png");
+  img10=loadImage("people3.png");
+  img11=loadImage("people4.png");
+  img12=loadImage("people5.png");
+  img13=loadImage("people6.png");
+  img15=loadImage("shop.png");
+  img16=loadImage("Tree1.png");
+  img17=loadImage("Tree2.png");
+  img18=loadImage("Tree3.png");
+  img19=loadImage("arrow1.png");
+  img20=loadImage("arrow2.png");
+}
+void draw() {
+  background(158, 169, 169);
+  noStroke();
+  fill(255);
+  rect(300, 150, 500, 600);
+  fill(80, 80, 80);//grey
+  rect(0, 0, 350, 200);
+  rect(750, 0, 350, 200);
+  rect(0, 700, 350, 300);
+  rect(750, 700, 350, 300);
+  fill(59, 183, 46);//green
+  rect(0, 0, 300, 150);
+  rect(800, 0, 300, 150);
+  rect(0, 750, 300, 250);
+  rect(800, 750, 300, 250);
+  fill(158, 169, 169);
+  rect(350, 200, 400, 500);
+
+
+  //the stroke
+  stroke(197, 221, 43);
+  strokeWeight(4);
+
+
+  line(810, 410, 960, 410);
+  line(810, 400, 960, 400);
+  line(960, 400, 1000, 430);
+  line(960, 410, 1000, 440);
+  line(1000, 430, 1100, 430);
+  line(1000, 440, 1100, 440);
+  line(0, 420, 100, 420);
+  line(0, 430, 100, 430);
+  line(100, 420, 140, 450);
+  line(100, 430, 140, 460);
+  line(140, 450, 280, 450);
+  line(140, 460, 280, 460);
+  stroke(255);
+  line(1000, 450, 985, 465);
+  for (int i=0; i<5; i++) {
+    line(975-i*35, 470, 965-i*35, 470);
+  }
+  line(110, 410, 120, 400);
+  for (int i=0; i<5; i++) {
+    line(130+i*35, 390, 140+i*35, 390);
+  }
+
+
+  noStroke();
+  //the button
+  fill(0);
+  rect(1000, 760, 50, 40);
+  fill(255);
+  textSize(15);
+  text("Button", 1001, 780);
+  //small road
+  fill(197, 221, 43);
+  rect(550, 0, 10, 140);
+  rect(550, 770, 10, 140);
+  fill(255);
+  rect(350, 130, 210, 10);
+  rect(810, 400, 10, 300);
+  rect(550, 770, 200, 10);
+  rect(280, 200, 10, 265);
+  //dashed line
+  int x=450, y=0;
+  for (int i=0; i<3; i++) {
+    //up and down side dashed line
+    rect(x, y+50*i, 5, 20);
+    rect(x+200, y+50*i, 5, 20);
+    rect(x, y+900-50*i, 5, 20);
+    rect(x+200, y+900-50*i, 5, 20);
+  }
+  x=0;
+  y=300;
+  for (int i=0; i<7; i++) {
+    //right side dashed line
+    rect(x+50*i, y, 20, 5);
+    rect(x+50*i, y+290, 20, 5);
+    //left side dashed line
+    rect(x+820+50*i, y, 20, 5);
+    rect(x+820+50*i, y+290, 20, 5);
+  }
+  carMove();
+  if (walk==1) {
+    People();
+  }
+  image(img1, xPos1, 200, img1.width/2, img1.height/2);
+  image(img2, xPos2, 210);
+  image(img6, xPos6, 500);
+  image(img7, xPos7, 600);
+  image(img15, 850, -60);
+  //light fixture part1
+  fill(219, 219, 219);
+  stroke(0);
+  strokeWeight(1);
+  beginShape();
+  vertex(330, 175);
+  vertex(150, 120);
+  vertex(150, 520);
+  vertex(160, 530);//point to start the light
+  vertex(155, 520);
+  vertex(159, 132);
+  vertex(330, 175);
+  endShape();
+  //light fixture part2
+  beginShape();
+  vertex(775, 175);
+  vertex(850, 75);
+  vertex(580, 70);
+  vertex(575, 80);//point to start the light
+  vertex(580, 75);
+  vertex(840, 80);
+  vertex(775, 175);
+  endShape();
+  //light fixture part3
+  beginShape();
+  vertex(300, 740);
+  vertex(280, 790);
+  vertex(420, 790);
+  vertex(425, 770);//point to start the light
+  vertex(420, 785);
+  vertex(290, 785);
+  vertex(300, 740);
+  endShape();
+  //light fixture part 4
+  beginShape();
+  vertex(790, 750);
+  vertex(870, 695);
+  vertex(870, 335);
+  vertex(860, 325);//point to start the light
+  vertex(865, 330);
+  vertex(865, 695);
+  vertex(790, 750);
+  endShape();
+
+
+  //the light
+  stroke(227, 174, 0);
+  strokeWeight(5);
+
+
+  rect(162, 520, 105, 40);
+  rect(570, 80, 40, 80);
+  rect(405, 690, 40, 80);
+  rect(752, 305, 105, 40);
+  //the first set of red light
+  noStroke();
+  advanceCounter();
+  trafficlight2();
+  trafficlight3();
+  advanceCounter3();
+  trafficlight1();
+  trafficlight4();
+  image(img19, 243, 530);
+  image(img20, 756, 315);
+  for (int i=0; i<6; i++) {
+    //the image of the tree
+    image(img16, -60+i*60, 60);
+    image(img17, -60+i*60, -10);
+    image(img18, -60+i*60, -70);
+  }
+}
+
+
+void trafficlight1() {
+  //red light   (yellow)
+  if (lightorder1==2) {
+    fill(255, 0, 0);
+  } else {
+    fill(100);
+  }
+  ellipse(177, 540, 20, 20);//#1
+
+
+  // green light
+  if (lightorder1==1) {
+    fill(250, 250, 0);
+  } else {
+    fill(100);
+  }
+  ellipse(202, 540, 20, 20);//#1
+  // green light       //(red)
+  if (lightorder1==0) {
+    fill(0, 255, 0);
+  } else {
+    fill(100);
+  }
+  //the fourth light
+  ellipse(227, 540, 20, 20);
+  ellipse(252, 540, 20, 20);
+}
+
+
+void trafficlight2() {
+  if (lightorder==2) {
+    fill(255, 0, 0);
+  } else {
+    fill(100);
+  }
+  ellipse(590, 95, 20, 20);//#2
+
+
+  // yellow light
+  if (lightorder==1) {
+    fill(250, 250, 0);
+  } else {
+    fill(100);
+  }
+  ellipse(590, 120, 20, 20);//#2
+  // green light
+  if (lightorder==0) {
+    fill(0, 255, 0);
+  } else {
+    fill(100);
+  }
+
+
+  ellipse(590, 145, 20, 20);
+}
+void trafficlight3() {
+  //red
+  if (lightorder==2) {
+    fill(255, 0, 0);
+  } else {
+    fill(100);
+  }
+  ellipse (425, 705, 20, 20);//#3
+
+
+  // yellow light
+  if (lightorder==1) {
+    fill(250, 250, 0);
+  } else {
+    fill(100);
+  }
+  ellipse (425, 730, 20, 20);//#3
+  // green light
+  if (lightorder==0) {
+    fill(0, 255, 0);
+  } else {
+    fill(100);
+  }
+
+
+  ellipse (425, 755, 20, 20);
+  //the fourth light
+}
+void trafficlight4() {
+  //red
+  if (lightorder1==2) {
+    fill(255, 0, 0);
+  } else {
+    fill(100);
+  }
+  ellipse(842, 325, 20, 20);//#4
+
+
+  // yellow light
+  if (lightorder1==1) {
+    fill(250, 250, 0);
+  } else {
+    fill(100);
+  }
+  ellipse(817, 325, 20, 20);//#4
+  // green light
+  if (lightorder1==0) {
+    fill(0, 255, 0);
+  } else {
+    fill(100);
+  }
+  ellipse(792, 325, 20, 20);//#4
+  ellipse(767, 325, 20, 20);//#4
+}
+//for 2 and 3 
+void advanceCounter() {
+  counter++;
+  if (counter==1800) {
+    lightorder=2;
+    counter=0;
+  } else if (counter==1700) {
+    lightorder=1;
+  } else if (counter==900) {
+    lightorder=0;
+  }
+}  
+// 1 and 4
+void advanceCounter3() {
+  counter3++;
+  if (counter3==1800) {
+    lightorder1=0;
+    counter3=0;
+  } else if (counter3==900) {
+    lightorder1=2;
+  } else if (counter3==800) {
+    lightorder1=1;
+  }
+}  
+//the method for moving the car
+void carMove() {
+  if (lightorder==0) {
+    yPos4=yPos4+2;
+    yPos5=yPos5-1.2;
+  } else {
+    yPos4=40;
+    yPos5=785;
+  }
+
+
+  image(img4, 350, yPos4);
+  image(img5, 570, yPos5);
+
+
+  if (lightorder==2) {
+    xPos1=xPos1+1;
+    xPos2=xPos2+1.5;
+    xPos6=xPos6-1.34;
+    xPos7=xPos7-1.3;
+    xPos3=xPos3+1;
+    yPos3=yPos3+0.8;
+  } else {
+    xPos1=-200;
+    xPos2=0;
+    xPos6=1100;
+    xPos7=1100;
+    xPos3=-200;
+    yPos3=200;
+  }
+  if (xPos3<460) {
+    image(img3, xPos3, 390);
+    car3=true;
+  } else {
+    car3=false;
+  }
+  if (car3==false) {
+    image(img3a, 460, yPos3);
+  }
+}
+
+
+void mousePressed() {
+  if (mouseX>1000&&mouseX<1050) {
+    if (mouseY>760&&mouseY<800) {
+      walk=1;
+    }
+  } else {
+    walk=0;
+  }
+}
+void People() {
+  if (lightorder==0) {
+    yP1=yP1+1.2;
+    yP2=yP2+2;
+    yP3=yP3+1.5;
+    yP13=yP13-1.8;
+  } else {
+    yP1=100;
+    yP2=150;
+    yP3=180;
+    yP13=730;
+  }
+  image(img8, 755, yP1);
+  image(img9, 755, yP2);
+  image(img10, 300, yP3);
+  image(img13, 760, yP13);
+  if (lightorder==2) {
+    xP4=xP4+1.2;
+    xP5=xP5-1.5;
+  } else {
+    xP4=180;
+    xP5=90;
+  }
+  image(img11, xP4, 155);
+  image(img12, xP5, 710);
+}
+
